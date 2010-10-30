@@ -1,6 +1,7 @@
 This is a port of classic +acts_as_tree+ to Mongo Mapper.
 
-It has (almost) the same functionality and passes the original test-suite. It (by principle) does not work for Embedded Documents.
+It has (almost) the same functionality and passes the original test-suite. 
+It does not (by principle) work for Embedded Documents.
 TODO store path to parents/children as MongoMapper does not support eager-loading of associations.
 
 
