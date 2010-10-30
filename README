@@ -29,4 +29,4 @@ association. This requires that you have a foreign key, which by default is call
   root.children # => [child1]
   root.children.first.children.first # => subchild1
 
-Original Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license  
+Original acts_as_tree Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license  
