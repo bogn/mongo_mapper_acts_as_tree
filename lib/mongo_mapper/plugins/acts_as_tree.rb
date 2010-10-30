@@ -1,33 +1,33 @@
 module MongoMapper
-	module Plugins
-		module ActsAsTree
-			
-			require 'mongo_mapper'
-			
-			module ClassMethods
-				def acts_as_tree(options = {})
-					configuration = { :foreign_key => :parent_id, :order => nil, :counter_cache => nil }
+  module Plugins
+    module ActsAsTree
+      
+      require 'mongo_mapper'
+      
+      module ClassMethods
+        def acts_as_tree(options = {})
+          configuration = { :foreign_key => :parent_id, :order => nil, :counter_cache => nil }
           configuration.update(options) if options.is_a?(Hash)
 
-					belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key], :counter_cache => configuration[:counter_cache]
+          belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key], :counter_cache => configuration[:counter_cache]
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
 
-					class_eval <<-EOV
+          class_eval <<-EOV
             include MongoMapper::Plugins::ActsAsTree::InstanceMethods
 
             def self.roots
-							where("#{configuration[:foreign_key]}".to_sym => nil).sort("#{configuration[:order]}").all
+              where("#{configuration[:foreign_key]}".to_sym => nil).sort("#{configuration[:order]}").all
             end
 
             def self.root
-							where("#{configuration[:foreign_key]}".to_sym => nil).sort("#{configuration[:order]}").first
+              where("#{configuration[:foreign_key]}".to_sym => nil).sort("#{configuration[:order]}").first
             end
           EOV
-				end
-			end
-			
-			module InstanceMethods
-				# Returns list of ancestors, starting from parent until root.
+        end
+      end
+      
+      module InstanceMethods
+        # Returns list of ancestors, starting from parent until root.
         #
         #   subchild1.ancestors # => [child1, root]
         def ancestors
@@ -56,8 +56,8 @@ module MongoMapper
         def self_and_siblings
           parent? ? parent.children : self.class.roots
         end
-			end
-			
-		end
-	end
+      end
+      
+    end
+  end
 end

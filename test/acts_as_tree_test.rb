@@ -42,9 +42,9 @@ end
 # SETUP CLASSES
 
 class Mixin
-	include MongoMapper::Document
-	plugin MongoMapper::Plugins::ActsAsTree
-	key :parent_id, ObjectId
+  include MongoMapper::Document
+  plugin MongoMapper::Plugins::ActsAsTree
+  key :parent_id, ObjectId
 end
 
 class TreeMixin < Mixin 
