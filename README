@@ -7,7 +7,7 @@ TODO store path to parents/children as MongoMapper does not support eager-loadin
 acts_as_tree
 ============
 
-Specify this +acts_as+ MongoMapper plugin if you want to model a tree structure by providing a parent association and a children
+Specify this MongoMapper plugin if you want to model a tree structure by providing a parent association and a children
 association. This requires that you have a foreign key, which by default is called +parent_id+.
 
   class Category
