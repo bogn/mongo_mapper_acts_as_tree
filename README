@@ -10,7 +10,11 @@ acts_as_tree
 Specify this +acts_as+ MongoMapper plugin if you want to model a tree structure by providing a parent association and a children
 association. This requires that you have a foreign key, which by default is called +parent_id+.
 
-  class Category < ActiveRecord::Base
+  class Category
+    include MongoMapper::Document
+
+    plugin MongoMapper::Plugins::ActsAsTree
+    key :parent_id, ObjectId
     acts_as_tree :order => :name
   end
 

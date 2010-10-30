@@ -44,7 +44,6 @@ end
 class Mixin
 	include MongoMapper::Document
 	plugin MongoMapper::Plugins::ActsAsTree
-	key :type, String
 	key :parent_id, ObjectId
 end
 
