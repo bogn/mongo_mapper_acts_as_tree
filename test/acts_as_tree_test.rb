@@ -1,41 +1,21 @@
-require 'rubygems'
-$:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
-
-require 'active_model'
-require 'mongo_mapper'
-require 'mongo_mapper/plugins/acts_as_tree'
-require 'ruby-debug'
-require 'shoulda'
-require 'test/unit'
-
-
-
-# DB SETUP
-
-MongoMapper.connection = Mongo::Connection.new('127.0.0.1', 27017)
-MongoMapper.database = "mongo_mapper_acts_as_tree_test"
-MongoMapper.database.collections.each { |c| c.drop_indexes }
-
-def teardown_db
-  MongoMapper.database.collections.each { |coll| coll.remove }
-end
+require 'test_helper'
 
 
 
 # SETUP TEST
 
-class Test::Unit::TestCase
-  def assert_queries(num = 1)
-    $query_count = 0
-    yield
-  ensure
-    assert_equal num, $query_count, "#{$query_count} instead of #{num} queries were executed."
-  end
-
-  def assert_no_queries(&block)
-    assert_queries(0, &block)
-  end
-end
+# class ActiveSupport::TestCase
+#   def assert_queries(num = 1)
+#     $query_count = 0
+#     yield
+#   ensure
+#     assert_equal num, $query_count, "#{$query_count} instead of #{num} queries were executed."
+#   end
+# 
+#   def assert_no_queries(&block)
+#     assert_queries(0, &block)
+#   end
+# end
 
 
 
@@ -64,7 +44,7 @@ end
 
 # TESTS
 
-class TreeTest < Test::Unit::TestCase
+class TreeTest < ActiveSupport::TestCase
   
   def setup
     @root1 = TreeMixin.create!
@@ -73,10 +53,6 @@ class TreeTest < Test::Unit::TestCase
     @root_child2 = TreeMixin.create! :parent_id => @root1.id
     @root2 = TreeMixin.create!
     @root3 = TreeMixin.create!
-  end
-
-  def teardown
-    teardown_db
   end
 
   def test_children
@@ -177,10 +153,6 @@ end
 #     @rc3 = RecursivelyCascadedTreeMixin.create! :parent_id => @rc2.id
 #     @rc4 = RecursivelyCascadedTreeMixin.create! :parent_id => @rc3.id
 #   end
-# 
-#   def teardown
-#     teardown_db
-#   end
 #     
 #   def test_eager_association_loading
 #     roots = TreeMixin.find(:all, :include => :children, :conditions => "mixins.parent_id IS NULL", :order => "mixins.id")
@@ -213,15 +185,11 @@ end
 
 
 
-class TreeTestWithoutOrder < Test::Unit::TestCase
+class TreeTestWithoutOrder < ActiveSupport::TestCase
   
   def setup                               
     @root1 = TreeMixinWithoutOrder.create!
     @root2 = TreeMixinWithoutOrder.create!
-  end
-
-  def teardown
-    teardown_db
   end
 
   def test_root

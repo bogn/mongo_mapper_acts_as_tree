@@ -1,0 +1,49 @@
+= mongo_mapper_acts_as_tree
+
+This is a port of classic Rails {acts_as_tree}[http://github.com/rails/acts_as_tree] to Mongo Mapper. Specify this MongoMapper plugin if you want to model a tree structure by providing a parent association and a children association. This requires that you have a foreign key, which by default is called parent_id.
+
+It has (almost) the same functionality and passes the original test-suite. Scope needs to be defined as symbol or array of symbols. It does not work for Embedded Documents. Please note, it is not yet optimized and therefore issues more queries than necessary.
+
+== Installation
+
+mongo_mapper_acts_as_list is available as RubyGem:
+
+  gem install mongo_mapper_acts_as_tree
+  
+== Example
+
+  class Category
+    include MongoMapper::Document
+
+    plugin MongoMapper::Plugins::ActsAsTree
+
+    key :parent_id, ObjectId
+    acts_as_tree :order => :name
+  end
+
+  Example:
+  root
+   \_ child1
+        \_ subchild1
+        \_ subchild2
+
+  root      = Category.create(:name => "root")
+  child1    = root.children.create(:name => "child1")
+  subchild1 = child1.children.create(:name => "subchild1")
+
+  root.parent   # => nil
+  child1.parent # => root
+  root.children # => [child1]
+  root.children.first.children.first # => subchild1
+
+== Note on Patches/Pull Requests
+
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a future version unintentionally.
+* Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+== Copyright
+
+Original Rails acts_as_tree Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license
