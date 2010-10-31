@@ -2,7 +2,7 @@
 
 This is a port of classic Rails {acts_as_tree}[http://github.com/rails/acts_as_tree] to Mongo Mapper. Specify this MongoMapper plugin if you want to model a tree structure by providing a parent association and a children association. This requires that you have a foreign key, which by default is called parent_id.
 
-It has (almost) the same functionality and passes the original test-suite. Scope needs to be defined as symbol or array of symbols. It does not work for Embedded Documents. Please note, it is not yet optimized and therefore issues more queries than necessary.
+It has (almost) the same functionality and passes the original test-suite. Scope needs to be defined as symbol or array of symbols. It does not work (by principle) for Embedded Documents. Please note, it is not yet optimized and therefore issues more queries than necessary.
 
 == Installation
 
