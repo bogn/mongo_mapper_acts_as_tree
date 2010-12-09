@@ -13,8 +13,6 @@ module MongoMapper
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
 
           class_eval <<-EOV
-            include MongoMapper::Plugins::ActsAsTree::InstanceMethods
-
             def self.roots
               where("#{configuration[:foreign_key]}".to_sym => nil).sort("#{configuration[:order]}").all
             end

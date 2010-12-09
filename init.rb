@@ -1,2 +1,1 @@
-$:.unshift "#{File.dirname(__FILE__)}/lib"
-require 'mongo_mapper/plugins/acts_as_list'
+require File.join(File.dirname(__FILE__), 'lib', 'mongo_mapper', 'plugins', 'acts_as_tree')
