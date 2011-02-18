@@ -2,8 +2,11 @@ module MongoMapper
   module Plugins
     module ActsAsTree
       
-      require 'mongo_mapper'
+      extend ActiveSupport::Concern
       
+      
+      
+      # --------------------------------------------------------------------------------
       module ClassMethods
         def acts_as_tree(options = {})
           configuration = { :foreign_key => :parent_id, :order => nil, :counter_cache => nil }
@@ -24,6 +27,9 @@ module MongoMapper
         end
       end
       
+      
+      
+      # --------------------------------------------------------------------------------
       module InstanceMethods
         # Returns list of ancestors, starting from parent until root.
         #

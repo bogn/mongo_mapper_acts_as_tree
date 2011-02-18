@@ -2,7 +2,7 @@
 module MongoMapper
   module Plugins
     module ActsAsTree
-      Version = '0.1.1'
+      Version = '0.2'
     end
   end
 end
