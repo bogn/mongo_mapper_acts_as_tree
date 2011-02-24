@@ -20,7 +20,6 @@ module MongoMapper
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
 
           before_save :set_parents
-          after_save :update_descendants
 
           class_eval <<-EOV
             def self.roots
@@ -67,13 +66,7 @@ module MongoMapper
         def self_and_siblings
           parent? ? parent.children : self.class.roots
         end
-        
-        # after save, update descendants, so they have correct parent_ids values
-        def update_descendants
-          descendants.each do |descendant|
-            descendant.save unless (descendant.parent_ids - [self.id] == self.parent_ids)
-          end
-        end
+
       end
       
     end
