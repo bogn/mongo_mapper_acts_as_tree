@@ -45,6 +45,10 @@ module MongoMapper
               self.class.where('#{configuration[:foreign_key].to_s.pluralize}' => self.id).all
             end
             
+            def depth
+              self.#{configuration[:foreign_key].to_s.pluralize}.count
+            end
+            
           EOV
         end
       end

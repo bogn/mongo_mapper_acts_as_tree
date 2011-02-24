@@ -104,6 +104,15 @@ class TreeTest < ActiveSupport::TestCase
     assert_equal [@root1, @root2, @root3], TreeMixin.roots
   end
   
+  def test_depth
+    assert_equal 0, @root1.depth
+    assert_equal 0, @root2.depth
+    assert_equal 0, @root3.depth
+    assert_equal 1, @root_child1.depth 
+    assert_equal 1, @root_child2.depth 
+    assert_equal 2, @child1_child.depth 
+  end
+  
   def test_siblings
     assert_equal [@root2, @root3], @root1.siblings
     assert_equal [@root_child2], @root_child1.siblings
