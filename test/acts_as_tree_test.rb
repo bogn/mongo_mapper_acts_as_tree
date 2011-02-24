@@ -131,15 +131,6 @@ class TreeTest < ActiveSupport::TestCase
     assert_equal [@root1, @root2, @root3], @root3.self_and_siblings
   end
   
-  def test_change_of_parent_id
-    @root_child1.parent = @root2
-    @root_child1.save
-
-    assert_equal [@root_child1], @root2.reload.children
-    # assert_equal [@root_child1, @child1_child], @root2.reload.descendants
-    # assert_equal [@root2, @root_child1], @child1_child.reload.ancestors
-    # assert_equal [@root_child2], @root1.reload.descendants
-  end
 end
 
 
