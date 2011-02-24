@@ -12,6 +12,10 @@ module MongoMapper
           configuration = { :foreign_key => :parent_id, :order => nil, :counter_cache => nil }
           configuration.update(options) if options.is_a?(Hash)
 
+          # automatically create needed keys if they don't already exist
+          key configuration[:foreign_key], ObjectId unless keys.key?(configuration[:foreign_key])
+          key configuration[:foreign_key].to_s.pluralize.to_sym, Array unless keys.key?(configuration[:foreign_key].to_s.pluralize.to_sym)
+
           belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key], :counter_cache => configuration[:counter_cache]
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
           before_save :set_parents

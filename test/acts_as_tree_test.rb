@@ -7,20 +7,18 @@ require 'test_helper'
 class Mixin
   include MongoMapper::Document
   plugin MongoMapper::Plugins::ActsAsTree
-  key :parent_id, ObjectId
-  key :parent_ids, Array
 end
 
 class TreeMixin < Mixin 
-  acts_as_tree :foreign_key => :parent_id, :order => :id
+  acts_as_tree
 end
 
 class TreeMixinWithoutOrder < Mixin
-  acts_as_tree :foreign_key => :parent_id
+  acts_as_tree
 end
 
 class RecursivelyCascadedTreeMixin < Mixin
-  acts_as_tree :foreign_key => :parent_id
+  acts_as_tree
   has_one :first_child, :class_name => 'RecursivelyCascadedTreeMixin', :foreign_key => :parent_id
 end
 
