@@ -129,58 +129,18 @@ class TreeTest < ActiveSupport::TestCase
     assert_equal [@root_child1, @root_child2], @root_child2.self_and_siblings
     assert_equal [@root1, @root2, @root3], @root2.self_and_siblings
     assert_equal [@root1, @root2, @root3], @root3.self_and_siblings
-  end           
+  end
+  
+  def test_change_of_parent_id
+    @root_child1.parent = @root2
+    @root_child1.save
+
+    assert_equal [@root_child1], @root2.reload.children
+    assert_equal [@root_child1, @child1_child], @root2.reload.descendants
+    assert_equal [@root2, @root_child1], @child1_child.reload.ancestors
+    assert_equal [@root_child2], @root1.reload.descendants
+  end
 end
-
-
-# SKIP THIS AS THERE IS NO EAGER LOADING IN MONGOMAPPER
-
-# class TreeTestWithEagerLoading < Test::Unit::TestCase
-#   
-#   def setup 
-#     teardown_db
-#     setup_db
-#     @root1 = TreeMixin.create!
-#     @root_child1 = TreeMixin.create! :parent_id => @root1.id
-#     @child1_child = TreeMixin.create! :parent_id => @root_child1.id
-#     @root_child2 = TreeMixin.create! :parent_id => @root1.id
-#     @root2 = TreeMixin.create!
-#     @root3 = TreeMixin.create!
-#     
-#     @rc1 = RecursivelyCascadedTreeMixin.create!
-#     @rc2 = RecursivelyCascadedTreeMixin.create! :parent_id => @rc1.id 
-#     @rc3 = RecursivelyCascadedTreeMixin.create! :parent_id => @rc2.id
-#     @rc4 = RecursivelyCascadedTreeMixin.create! :parent_id => @rc3.id
-#   end
-#     
-#   def test_eager_association_loading
-#     roots = TreeMixin.find(:all, :include => :children, :conditions => "mixins.parent_id IS NULL", :order => "mixins.id")
-#     assert_equal [@root1, @root2, @root3], roots                     
-#     assert_no_queries do
-#       assert_equal 2, roots[0].children.size
-#       assert_equal 0, roots[1].children.size
-#       assert_equal 0, roots[2].children.size
-#     end   
-#   end
-#   
-#   def test_eager_association_loading_with_recursive_cascading_three_levels_has_many
-#     root_node = RecursivelyCascadedTreeMixin.find(:first, :include => { :children => { :children => :children } }, :order => 'mixins.id')
-#     assert_equal @rc4, assert_no_queries { root_node.children.first.children.first.children.first }
-#   end
-#   
-#   def test_eager_association_loading_with_recursive_cascading_three_levels_has_one
-#     root_node = RecursivelyCascadedTreeMixin.find(:first, :include => { :first_child => { :first_child => :first_child } }, :order => 'mixins.id')
-#     assert_equal @rc4, assert_no_queries { root_node.first_child.first_child.first_child }
-#   end
-#   
-#   def test_eager_association_loading_with_recursive_cascading_three_levels_belongs_to
-#     leaf_node = RecursivelyCascadedTreeMixin.find(:first, :include => { :parent => { :parent => :parent } }, :order => 'mixins.id DESC')
-#     assert_equal @rc1, assert_no_queries { leaf_node.parent.parent.parent }
-#   end 
-# end
-
-
-
 
 
 

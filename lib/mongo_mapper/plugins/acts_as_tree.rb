@@ -9,16 +9,18 @@ module MongoMapper
       # --------------------------------------------------------------------------------
       module ClassMethods
         def acts_as_tree(options = {})
-          configuration = { :foreign_key => :parent_id, :order => nil, :counter_cache => nil }
+          configuration = { :foreign_key => :parent_id, :order => nil }
           configuration.update(options) if options.is_a?(Hash)
 
           # automatically create needed keys if they don't already exist
           key configuration[:foreign_key], ObjectId unless keys.key?(configuration[:foreign_key])
           key configuration[:foreign_key].to_s.pluralize.to_sym, Array unless keys.key?(configuration[:foreign_key].to_s.pluralize.to_sym)
 
-          belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key], :counter_cache => configuration[:counter_cache]
+          belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key]
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
+
           before_save :set_parents
+          after_save :update_descendants
 
           class_eval <<-EOV
             def self.roots
@@ -64,6 +66,13 @@ module MongoMapper
 
         def self_and_siblings
           parent? ? parent.children : self.class.roots
+        end
+        
+        # after save, update descendants, so they have correct parent_ids values
+        def update_descendants
+          descendants.each do |descendant|
+            descendant.save unless (descendant.parent_ids - [self.id] == self.parent_ids)
+          end
         end
       end
       
