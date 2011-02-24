@@ -14,6 +14,7 @@ module MongoMapper
 
           belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key], :counter_cache => configuration[:counter_cache]
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
+          before_save :set_parents
 
           class_eval <<-EOV
             def self.roots
@@ -23,6 +24,23 @@ module MongoMapper
             def self.root
               where("#{configuration[:foreign_key]}".to_sym => nil).sort("#{configuration[:order]}").first
             end
+
+            def set_parents
+              self.#{configuration[:foreign_key].to_s.pluralize} = parent.#{configuration[:foreign_key].to_s.pluralize}.dup << #{configuration[:foreign_key]} if parent?
+            end
+            
+            def ancestors
+              self.class.where(:id => { '$in' => self.#{configuration[:foreign_key].to_s.pluralize} }).all.reverse || []
+            end
+            
+            def root
+              self.class.find(self.#{configuration[:foreign_key].to_s.pluralize}.first) || self
+            end
+            
+            def descendants
+              self.class.where('#{configuration[:foreign_key].to_s.pluralize}' => self.id).all
+            end
+            
           EOV
         end
       end
@@ -31,32 +49,11 @@ module MongoMapper
       
       # --------------------------------------------------------------------------------
       module InstanceMethods
-        # Returns list of ancestors, starting from parent until root.
-        #
-        #   subchild1.ancestors # => [child1, root]
-        def ancestors
-          node, nodes = self, []
-          nodes << node = node.parent while node.parent?
-          nodes
-        end
 
-        # Returns the root node of the tree.
-        def root
-          node = self
-          node = node.parent while node.parent?
-          node
-        end
-
-        # Returns all siblings of the current node.
-        #
-        #   subchild1.siblings # => [subchild2]
         def siblings
           self_and_siblings - [self]
         end
 
-        # Returns all siblings and a reference to the current node.
-        #
-        #   subchild1.self_and_siblings # => [subchild1, subchild2]
         def self_and_siblings
           parent? ? parent.children : self.class.roots
         end

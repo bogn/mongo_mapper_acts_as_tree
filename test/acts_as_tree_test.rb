@@ -2,29 +2,13 @@ require 'test_helper'
 
 
 
-# SETUP TEST
-
-# class ActiveSupport::TestCase
-#   def assert_queries(num = 1)
-#     $query_count = 0
-#     yield
-#   ensure
-#     assert_equal num, $query_count, "#{$query_count} instead of #{num} queries were executed."
-#   end
-# 
-#   def assert_no_queries(&block)
-#     assert_queries(0, &block)
-#   end
-# end
-
-
-
 # SETUP CLASSES
 
 class Mixin
   include MongoMapper::Document
   plugin MongoMapper::Plugins::ActsAsTree
   key :parent_id, ObjectId
+  key :parent_ids, Array
 end
 
 class TreeMixin < Mixin 
@@ -98,6 +82,14 @@ class TreeTest < ActiveSupport::TestCase
     assert_equal [@root1], @root_child2.ancestors
     assert_equal [], @root2.ancestors
     assert_equal [], @root3.ancestors
+  end
+  
+  def test_descendants
+    assert_equal [@root_child1, @child1_child, @root_child2], @root1.descendants
+    assert_equal [@child1_child], @root_child1.descendants
+    assert_equal [], @root_child2.descendants
+    assert_equal [], @root2.descendants
+    assert_equal [], @root3.descendants
   end
   
   def test_root
