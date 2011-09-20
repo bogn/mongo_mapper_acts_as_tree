@@ -19,6 +19,9 @@ module MongoMapper
           belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key]
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
 
+          class_inheritable_accessor :acts_as_tree_node_class
+          self.acts_as_tree_node_class = configuration[:polymorphic] ? name.constantize : nil
+
           before_save :set_parents
 
           class_eval <<-EOV
@@ -35,21 +38,25 @@ module MongoMapper
             end
             
             def ancestors
-              self.class.where(:id => { '$in' => self.#{configuration[:foreign_key].to_s.pluralize} }).all.reverse || []
+              get_class.where(:id => { '$in' => self.#{configuration[:foreign_key].to_s.pluralize} }).all.reverse || []
             end
-            
+
             def root
-              self.class.find(self.#{configuration[:foreign_key].to_s.pluralize}.first) || self
+              get_class.find(self.#{configuration[:foreign_key].to_s.pluralize}.first) || self
             end
-            
+
             def descendants
-              self.class.where('#{configuration[:foreign_key].to_s.pluralize}' => self.id).all
+              get_class.where('#{configuration[:foreign_key].to_s.pluralize}' => self.id).all
             end
             
             def depth
               self.#{configuration[:foreign_key].to_s.pluralize}.count
             end
             
+            private
+              def get_class
+                self.class.acts_as_tree_node_class || self.class
+              end
           EOV
         end
       end
