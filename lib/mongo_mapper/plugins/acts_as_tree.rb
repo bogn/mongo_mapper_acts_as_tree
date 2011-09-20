@@ -48,6 +48,10 @@ module MongoMapper
             def descendants
               get_class.where('#{configuration[:foreign_key].to_s.pluralize}' => self.id).all
             end
+
+            def descendant_count
+              get_class.where('#{configuration[:foreign_key].to_s.pluralize}' => self.id).count
+            end
             
             def depth
               self.#{configuration[:foreign_key].to_s.pluralize}.count

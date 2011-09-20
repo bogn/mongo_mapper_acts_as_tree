@@ -89,6 +89,17 @@ class TreeTest < ActiveSupport::TestCase
     assert_equal [], @root2.descendants
     assert_equal [], @root3.descendants
   end
+
+  def test_descendant_count
+    @extra = @child1_child.children.create
+    assert_equal 4, @root1.descendant_count
+    assert_equal 2, @root_child1.descendant_count
+    assert_equal 1, @child1_child.descendant_count
+    assert_equal 0, @extra.descendant_count
+    assert_equal 0, @root_child2.descendant_count
+    assert_equal 0, @root2.descendant_count
+    assert_equal 0, @root3.descendant_count
+  end
   
   def test_root
     assert_equal @root1, TreeMixin.root
