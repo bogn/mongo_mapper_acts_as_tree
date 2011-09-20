@@ -22,6 +22,15 @@ class RecursivelyCascadedTreeMixin < Mixin
   has_one :first_child, :class_name => 'RecursivelyCascadedTreeMixin', :foreign_key => :parent_id
 end
 
+class Page < Mixin
+  acts_as_tree :polymorphic => true
+
+  key :name, String
+end
+
+class SubPage < Page
+end
+
 
 
 # TESTS
@@ -160,4 +169,40 @@ class TreeTestWithoutOrder < ActiveSupport::TestCase
   def test_roots
     assert_equal [], [@root1, @root2] - TreeMixinWithoutOrder.roots
   end
-end 
+end
+
+class TreeTestWithInheritingModels < ActiveSupport::TestCase
+  
+  def setup                               
+    @root      = Page.create(:name => "root")
+    @child1    = @root.children.create(:name => "child1") # creates a page
+    #TODO extend to allow the creation through the children association.
+    #@subchild1 = @child1.children.create(:name => "subchild1", :_type => "SubPage")
+    @subchild1 = SubPage.create(:name => "subchild1", :parent_id => @child1.id)
+  end
+
+  def test_parent
+    assert_equal nil, @root.parent
+    assert_equal @root, @child1.parent
+    assert_equal @child1, @subchild1.parent
+  end
+
+  def test_children
+    assert_equal [@child1], @root.children
+    assert_equal @subchild1, @root.children.first.children.first
+  end
+
+  def test_ancestors
+    assert_equal [@child1, @root], @subchild1.ancestors
+  end
+
+  def test_descendants
+    assert_equal [@child1, @subchild1], @root.descendants
+    assert_equal 2, @root.descendant_count
+  end
+
+  def test_for_expected_classes
+    assert_equal Page, @child1.class
+    assert_equal SubPage, @child1.children.first.class
+  end
+end  

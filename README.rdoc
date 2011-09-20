@@ -2,7 +2,7 @@
 
 This is a port of classic Rails {acts_as_tree}[http://github.com/rails/acts_as_tree] to Mongo Mapper. Specify this MongoMapper plugin if you want to model a tree structure by providing a parent association and a children association. This requires that you have a foreign key, which by default is called parent_id.
 
-It has (almost) the same functionality and passes the original test-suite. Scope needs to be defined as symbol or array of symbols. It does not work (by principle) for Embedded Documents. Please note, it is not yet optimized and therefore issues more queries than necessary.
+It has (almost) the same functionality and passes the original test-suite. Scope needs to be defined as symbol or array of symbols. It does not work (by principle) for Embedded Documents. But in contrast to the original acts_as_tree gem inheritance is supported (in this case called Single Collection Inheritance, ActiveRecord calls it Single Table Inheritance). Please note, it is not yet optimized and therefore issues more queries than necessary.
 
 == Installation
 
@@ -35,6 +35,39 @@ mongo_mapper_acts_as_list is available as RubyGem:
   child1.parent # => root
   root.children # => [child1]
   root.children.first.children.first # => subchild1
+
+If you want acts_as_tree to work in a Single Collection Inheritance scenario, just add :polymorphic => true to the options
+
+  class Page
+    include MongoMapper::Document
+
+    plugin MongoMapper::Plugins::ActsAsTree
+
+    key :name, String
+    key :parent_id, ObjectId
+    acts_as_tree :order => :name, :polymorphic => true
+  end
+
+  class SubPage < Page
+    key :some_irrelevant_key, String
+  end
+
+  Example:
+  root
+   \_ child1
+        \_ subchild1
+        \_ subchild2
+
+  root      = Page.create(:name => "root")
+  child1    = root.children.create(:name => "child1") # creates a page
+  subchild1 = SubPage.create(:name => "subchild1", :parent_id => child1.id)
+
+  root.parent   # => nil
+  child1.parent # => root
+  root.children # => [child1]
+  root.children.first.children.first # => subchild1
+  subchild1.ancestors # [child1, root]
+
 
 == Note on Patches/Pull Requests
 
