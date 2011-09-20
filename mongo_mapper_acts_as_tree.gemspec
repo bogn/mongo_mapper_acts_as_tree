@@ -1,18 +1,32 @@
 # encoding: UTF-8
-require File.expand_path('../lib/mongo_mapper/plugins/version', __FILE__)
 
 Gem::Specification.new do |s|
-  s.name = 'mongo_mapper_acts_as_tree'
-  s.homepage = 'http://github.com/tomasc/mongo_mapper_acts_as_tree'
-  s.summary = "Port of classic Rails ActsAsTree for MongoMapper"
-  s.require_path = 'lib'
-  s.authors = ['Tomas Celizna']
-  s.email = ['tomas.celizna@gmail.com']
-  s.version = MongoMapper::Plugins::ActsAsTree::Version
+  s.name = %q{mongo_mapper_acts_as_tree}
+  s.version = %q{0.3.3}
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.files = ["Gemfile", "README.rdoc", "Rakefile", "lib/mongo_mapper_acts_as_tree.rb", "lib/mongo_mapper/plugins/acts_as_tree.rb", "lib/mongo_mapper/plugins/version.rb", "test"]
+
+  s.authors = [%q{Tomas Celizna}]
+  s.date = %q{2011-02-24}
+  s.email = [%q{tomas.celizna@gmail.com}]
+  s.homepage = %q{http://github.com/tomasc/mongo_mapper_acts_as_tree}
+  s.require_paths = [%{lib}]
+  s.rubygems_version = %q{1.8.8}
+  s.summary = %q{Port of classic Rails ActsAsTree for MongoMapper}
   s.platform = Gem::Platform::RUBY
-  s.files = Dir.glob("{lib,test}/**/*") + %w[README.rdoc]
 
-  s.add_dependency 'mongo_mapper'
+  if s.respond_to? :specification_version then
+    s.specification_version = 3
 
-  s.add_development_dependency 'rake'
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<mongo_mapper>, [">= 0.9"])
+      s.add_development_dependency(%q<rake>, [">= 0"])
+    else
+      s.add_dependency(%q<mongo_mapper>, [">= 0.9"])
+      s.add_dependency(%q<rake>, [">= 0"])
+    end
+  else
+    s.add_dependency(%q<mongo_mapper>, [">= 0.9"])
+    s.add_dependency(%q<rake>, [">= 0"])
+  end
 end
