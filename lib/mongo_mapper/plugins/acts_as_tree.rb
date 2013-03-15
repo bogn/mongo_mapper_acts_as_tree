@@ -19,7 +19,7 @@ module MongoMapper
           belongs_to :parent, :class_name => name, :foreign_key => configuration[:foreign_key]
           many :children, :class_name => name, :foreign_key => configuration[:foreign_key], :order => configuration[:order], :dependent => :destroy
 
-          class_inheritable_accessor :acts_as_tree_node_class
+          class_attribute :acts_as_tree_node_class
           self.acts_as_tree_node_class = configuration[:polymorphic] ? name.constantize : nil
 
           before_save :set_parents
