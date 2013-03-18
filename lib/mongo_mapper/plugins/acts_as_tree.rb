@@ -66,18 +66,15 @@ module MongoMapper
       end
       
       
-      
       # --------------------------------------------------------------------------------
-      module InstanceMethods
+      # InstanceMethods
 
-        def siblings
-          self_and_siblings - [self]
-        end
+      def siblings
+        self_and_siblings - [self]
+      end
 
-        def self_and_siblings
-          parent? ? parent.children : self.class.roots
-        end
-
+      def self_and_siblings
+        parent? ? parent.children : self.class.roots
       end
       
     end
